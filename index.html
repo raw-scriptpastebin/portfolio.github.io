@@ -1447,7 +1447,7 @@
     }
 
     /* ==========================================
-       GREETING OVERLAY
+       GREETING OVERLAY (lightweight, theme-aware)
     ========================================== */
     #greeting-overlay {
       position: fixed;
@@ -1456,94 +1456,46 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(11, 11, 20, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(11,11,20,0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      transition: opacity 260ms ease, visibility 260ms ease;
+      pointer-events: none;
     }
     #greeting-overlay.show {
       opacity: 1;
       visibility: visible;
+      pointer-events: auto;
     }
     .greeting-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 52px 48px 44px;
-      max-width: 480px;
-      width: 90%;
+      border-radius: 20px;
+      padding: 32px 28px;
+      max-width: 420px;
+      width: calc(100% - 48px);
       text-align: center;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.15);
-      animation: greeting-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.48);
+      transform: translateY(8px) scale(0.995);
+      transition: transform 360ms cubic-bezier(.2,.9,.2,1), opacity 260ms ease;
     }
-    @keyframes greeting-pop {
-      from { transform: scale(0.85); opacity: 0; }
-      to   { transform: scale(1);    opacity: 1; }
-    }
-    .greeting-wave {
-      font-size: 56px;
-      margin-bottom: 16px;
-      display: block;
-      animation: wave-hand 1.2s ease-in-out 0.6s 3;
-      transform-origin: 70% 80%;
-    }
-    @keyframes wave-hand {
-      0%,100% { transform: rotate(0deg); }
-      25%     { transform: rotate(18deg); }
-      75%     { transform: rotate(-12deg); }
-    }
-    .greeting-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text-heading);
-      line-height: 1.4;
-      margin-bottom: 8px;
-    }
-    .greeting-sub {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 36px;
-    }
-    .greeting-buttons {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-    }
-    .btn-hello {
+    #greeting-overlay.show .greeting-card { transform: translateY(0) scale(1); }
+    .greeting-wave { font-size: 44px; display:block; margin-bottom:8px; }
+    .greeting-title { font-weight:700; font-size:20px; color:var(--text-heading); margin-bottom:6px; }
+    .greeting-sub { font-size:13px; color:var(--text-muted); margin-bottom:18px; }
+    .greeting-actions { display:flex; justify-content:center; }
+    .btn-visit {
       background: var(--gradient);
-      color: #fff;
-      border: none;
-      border-radius: 99px;
-      padding: 12px 36px;
-      font-size: 15px;
-      font-weight: 700;
-      font-family: 'Space Grotesk', sans-serif;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+      color: #fff; border: none; padding: 10px 28px; border-radius: 999px;
+      font-weight:700; text-decoration:none; display:inline-block;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+      box-shadow: 0 6px 18px rgba(124,58,237,0.18);
     }
-    .btn-hello:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.5); }
-    .btn-hello:active { transform: scale(0.96); }
-    .btn-ignore {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 12px 28px;
-      font-size: 14px;
-      font-weight: 500;
-      font-family: 'Inter', sans-serif;
-      color: var(--text-muted);
-      cursor: not-allowed;
-      user-select: none;
-      pointer-events: auto;
-      position: relative;
-      white-space: nowrap;
-    }
-    .btn-ignore.escaped {
-      position: fixed;
+    .btn-visit:focus, .btn-visit:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(124,58,237,0.24); }
+    @media (prefers-reduced-motion: reduce) {
+      #greeting-overlay, .greeting-card { transition: none !important; }
     }
 
     /* ==========================================
@@ -1794,14 +1746,13 @@
   </div>
 
   <!-- GREETING OVERLAY -->
-  <div id="greeting-overlay">
-    <div class="greeting-card">
-      <span class="greeting-wave">👋</span>
-      <div class="greeting-title">Hi, welcome to my portfolio!</div>
-      <div class="greeting-sub">Thank you for visiting!</div>
-      <div class="greeting-buttons">
-        <button class="btn-ignore" id="btn-ignore">Ignore</button>
-        <button class="btn-hello" id="btn-hello">Hello! 👋</button>
+  <div id="greeting-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="greeting-card" role="document">
+      <span class="greeting-wave" aria-hidden="true">👋</span>
+      <div class="greeting-title">Welcome — explore my work</div>
+      <div class="greeting-sub">Glad you're here. Take a look at my projects.</div>
+      <div class="greeting-actions">
+        <a href="#projects" class="btn-visit" id="btn-visit">Visit Portfolio</a>
       </div>
     </div>
   </div>
@@ -1904,7 +1855,7 @@
             <a href="https://github.com/richardcabaelretada" target="_blank" title="GitHub">
               <i class="fab fa-github"></i>
             </a>
-            <a href="mailto:richardretada@gmail.com" title="Email">
+            <a href="mailto:richardretada@gmail.com?subject=Project%20Inquiry&body=Hi%20Richard%2C%0A%0AI%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project.%0A%0ABest%2C%0A%5BYour%20Name%5D" title="Email">
               <i class="fas fa-envelope"></i>
             </a>
           </div>
@@ -2044,7 +1995,7 @@
             </div>
             <div class="info-item full">
               <div class="label">Email</div>
-              <div class="value"><a href="mailto:richardretada@gmail.com">richardretada@gmail.com</a></div>
+              <div class="value"><a href="mailto:richardretada@gmail.com?subject=Project%20Inquiry&body=Hi%20Richard%2C%0A%0AI%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project.%0A%0ABest%2C%0A%5BYour%20Name%5D">richardretada@gmail.com</a></div>
             </div>
             <div class="info-item full">
               <div class="label">Address</div>
@@ -2676,7 +2627,7 @@
               <div style="flex:1">
                 <div class="contact-label">Email</div>
                 <div class="contact-value" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                  <a href="mailto:richardretada@gmail.com">richardretada@gmail.com</a>
+                  <a href="mailto:richardretada@gmail.com?subject=Project%20Inquiry&body=Hi%20Richard%2C%0A%0AI%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project.%0A%0ABest%2C%0A%5BYour%20Name%5D">richardretada@gmail.com</a>
                   <button class="copy-btn" id="copyEmail" data-copy="richardretada@gmail.com">
                     <i class="fas fa-copy"></i> Copy
                   </button>
@@ -2711,30 +2662,15 @@
 
         <div class="contact-form fade-up delay-2">
           <h4>Send a Message</h4>
-          <p>Fill in the form below and I'll get back to you as soon as possible.</p>
-          <form onsubmit="handleFormSubmit(event)">
-            <div class="form-row">
-              <div class="form-group">
-                <label>Your Name</label>
-                <input type="text" class="form-control" placeholder="John Doe" required>
-              </div>
-              <div class="form-group">
-                <label>Your Email</label>
-                <input type="email" class="form-control" placeholder="john@example.com" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Subject</label>
-              <input type="text" class="form-control" placeholder="What's it about?">
-            </div>
-            <div class="form-group">
-              <label>Message</label>
-              <textarea class="form-control" placeholder="Write your message here..." required></textarea>
-            </div>
-            <button type="submit" class="btn-primary" style="width:100%; justify-content:center;">
-              <i class="fas fa-paper-plane"></i> Send Message
+          <p>If you'd like to contact me, click the button below to open your email client and send a message directly to my inbox.</p>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:18px;">
+            <a id="emailRichardBtn" href="mailto:richardretada@gmail.com?subject=Project%20Inquiry&body=Hi%20Richard%2C%0A%0AI%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project.%0A%0ABest%2C%0A%5BYour%20Name%5D" class="btn-primary" style="width:240px;justify-content:center;">
+              <i class="fas fa-envelope"></i> Email Richard
+            </a>
+            <button class="copy-btn" id="copyEmailInline" data-copy="richardretada@gmail.com">
+              <i class="fas fa-copy"></i> Copy Email
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>
@@ -2749,7 +2685,7 @@
         <a href="https://www.facebook.com/richardretada.dev/" target="_blank"><i class="fab fa-facebook-f"></i></a>
         <a href="https://www.instagram.com/richardretada/" target="_blank"><i class="fab fa-instagram"></i></a>
         <a href="https://github.com/richardcabaelretada" target="_blank"><i class="fab fa-github"></i></a>
-        <a href="mailto:richardretada@gmail.com"><i class="fas fa-envelope"></i></a>
+        <a href="mailto:richardretada@gmail.com?subject=Project%20Inquiry&body=Hi%20Richard%2C%0A%0AI%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project.%0A%0ABest%2C%0A%5BYour%20Name%5D"><i class="fas fa-envelope"></i></a>
         <a href="https://www.richardretada.click" target="_blank"><i class="fas fa-globe"></i></a>
       </div>
       <p class="footer-copy">© 2024 <span>Richard Retada</span> · Built with code &amp; caffeine ☕</p>
@@ -2762,6 +2698,25 @@
   </button>
 
   <script>
+  // Open Gmail compose if possible, fallback to mailto
+  (function(){
+    var btn = document.getElementById('emailRichardBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function(e){
+      // allow default mailto if shift-click or ctrl-click (user intention)
+      if (e.shiftKey || e.ctrlKey || e.metaKey) return;
+      e.preventDefault();
+      var to = 'richardretada@gmail.com';
+      var subject = 'Project Inquiry';
+      var body = 'Hi Richard,%0A%0AI found your portfolio and would like to discuss a project.%0A%0ABest,%0A[Your Name]';
+      var gmail = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(to) + '&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(decodeURIComponent(body));
+      var win = window.open(gmail, '_blank');
+      // popup blockers may block; fallback to mailto
+      if (!win) {
+        window.location.href = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subject) + '&body=' + body;
+      }
+    });
+  })();
     /* ==========================================
        LOADER — REAL PROGRESS TRACKER
     ========================================== */
@@ -2862,95 +2817,17 @@
         if (barFill) barFill.style.width = '100%';
         setTimeout(() => {
           loaderEl.classList.add('hidden');
-          showGreeting();
+          // show greeting if available
+          if (typeof window.showNewGreeting === 'function') {
+            try { window.showNewGreeting(); } catch(e) { /* ignore */ }
+          }
         }, 500);
       }
 
       setTimeout(finishLoader, 5000);
     })();
 
-    /* ==========================================
-       GREETING OVERLAY
-    ========================================== */
-    function showGreeting() {
-      const overlay   = document.getElementById('greeting-overlay');
-      const btnHello  = document.getElementById('btn-hello');
-      const btnIgnore = document.getElementById('btn-ignore');
-      if (!overlay) return;
-
-      overlay.classList.add('show');
-
-      const EDGE_PAD = 16;
-      let escaped = false;
-
-      /* Pick a random position in one of the four zones around the card */
-      function escapeAroundCard() {
-        const card = document.querySelector('.greeting-card');
-        const vw   = window.innerWidth;
-        const vh   = window.innerHeight;
-        const bw   = btnIgnore.offsetWidth  || 110;
-        const bh   = btnIgnore.offsetHeight || 44;
-
-        let cr = card
-          ? card.getBoundingClientRect()
-          : { left: vw/2-200, right: vw/2+200, top: vh/2-150, bottom: vh/2+150 };
-
-        /* Four candidate zones: above, below, left, right of the card */
-        const zones = [];
-        if (cr.top - bh - EDGE_PAD > EDGE_PAD)
-          zones.push({ zone: 'top' });
-        if (cr.bottom + bh + EDGE_PAD < vh - EDGE_PAD)
-          zones.push({ zone: 'bottom' });
-        if (cr.left - bw - EDGE_PAD > EDGE_PAD)
-          zones.push({ zone: 'left' });
-        if (cr.right + bw + EDGE_PAD < vw - EDGE_PAD)
-          zones.push({ zone: 'right' });
-
-        /* Fall back if no zone fits (very small screen) */
-        if (!zones.length) zones.push({ zone: 'bottom' });
-
-        const chosen = zones[Math.floor(Math.random() * zones.length)].zone;
-        let x, y;
-
-        if (chosen === 'top') {
-          x = Math.max(EDGE_PAD, Math.min(vw - bw - EDGE_PAD,
-              cr.left + Math.random() * (cr.width - bw)));
-          y = Math.max(EDGE_PAD, cr.top - bh - EDGE_PAD - Math.random() * 40);
-        } else if (chosen === 'bottom') {
-          x = Math.max(EDGE_PAD, Math.min(vw - bw - EDGE_PAD,
-              cr.left + Math.random() * (cr.width - bw)));
-          y = Math.min(vh - bh - EDGE_PAD, cr.bottom + EDGE_PAD + Math.random() * 40);
-        } else if (chosen === 'left') {
-          x = Math.max(EDGE_PAD, cr.left - bw - EDGE_PAD - Math.random() * 40);
-          y = Math.max(EDGE_PAD, Math.min(vh - bh - EDGE_PAD,
-              cr.top + Math.random() * (cr.height - bh)));
-        } else {
-          x = Math.min(vw - bw - EDGE_PAD, cr.right + EDGE_PAD + Math.random() * 40);
-          y = Math.max(EDGE_PAD, Math.min(vh - bh - EDGE_PAD,
-              cr.top + Math.random() * (cr.height - bh)));
-        }
-
-        if (!escaped) {
-          btnIgnore.classList.add('escaped');
-          escaped = true;
-        }
-        btnIgnore.style.left   = x + 'px';
-        btnIgnore.style.top    = y + 'px';
-        btnIgnore.style.right  = 'auto';
-        btnIgnore.style.bottom = 'auto';
-      }
-
-      /* Trigger only on actual hover or click — no proximity detection */
-      btnIgnore.addEventListener('mouseenter',  ()  => escapeAroundCard());
-      btnIgnore.addEventListener('click',       e   => { e.stopPropagation(); escapeAroundCard(); });
-      btnIgnore.addEventListener('mousedown',   e   => { e.stopPropagation(); e.preventDefault(); escapeAroundCard(); });
-      btnIgnore.addEventListener('touchstart',  e   => { e.stopPropagation(); e.preventDefault(); escapeAroundCard(); }, { passive: false });
-
-      btnHello.addEventListener('click', () => {
-        overlay.style.transition = 'opacity 0.4s ease, visibility 0.4s ease';
-        overlay.classList.remove('show');
-      });
-    }
+    /* Greeting overlay removed */
 
     /* ==========================================
        THEME TOGGLE
@@ -3104,18 +2981,40 @@
     });
 
     /* ==========================================
-       CONTACT FORM
+       CONTACT FORM — open mail client with form data
     ========================================== */
     function handleFormSubmit(e) {
       e.preventDefault();
-      const btn = e.target.querySelector('button[type="submit"]');
-      btn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
-      btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
-      setTimeout(() => {
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
-        btn.style.background = '';
-        e.target.reset();
-      }, 3000);
+      const form = e.target;
+      const inputs = form.querySelectorAll('input.form-control');
+      const name = (inputs[0] && inputs[0].value.trim()) || '';
+      const fromEmail = (inputs[1] && inputs[1].value.trim()) || '';
+      const subjectInput = (inputs[2] && inputs[2].value.trim()) || '';
+      const message = (form.querySelector('textarea.form-control') && form.querySelector('textarea.form-control').value.trim()) || '';
+
+      const to = 'richardretada@gmail.com';
+      const subject = subjectInput || 'Project Inquiry';
+      let body = '';
+      if (message) body += message + '\n\n';
+      body += '---\n';
+      if (name) body += 'From: ' + name + '\n';
+      if (fromEmail) body += 'Reply-To: ' + fromEmail + '\n';
+      body += '\n';
+
+      // build mailto URL
+      const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      // update button state briefly
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) {
+        const old = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-envelope-open"></i> Opening email...';
+        btn.disabled = true;
+        setTimeout(() => { btn.innerHTML = old; btn.disabled = false; }, 1200);
+      }
+
+      // open user's mail client
+      window.location.href = mailto;
     }
 
 
@@ -3344,6 +3243,12 @@
           drawParticles();
         }
       });
+
+      // Expose simple control to pause/resume particles from other scripts
+      window.particleControl = {
+        pause: function() { particlePaused = true; cancelAnimationFrame(particleRaf); },
+        resume: function() { if (!particlePaused) return; particlePaused = false; drawParticles(); }
+      };
 
       drawParticles();
     })();
@@ -3869,6 +3774,12 @@
     const clock = new THREE.Clock();
     let raf, paused = false, lastT = 0;
 
+    // Expose simple control to pause/resume the 3D background animation
+    window.rrControl = {
+      pause: function() { paused = true; cancelAnimationFrame(raf); },
+      resume: function() { if (!paused) return; paused = false; clock.start(); animate(); }
+    };
+
     /* ── Main animate loop ── */
     function animate() {
       if (paused) return;
@@ -4059,6 +3970,43 @@
         if (typeof window._notifyObjLoaded === 'function') window._notifyObjLoaded();
       }
     );
+  })();
+  </script>
+  <script>
+  // Lightweight greeting: show once, pause backgrounds while visible
+  (function(){
+    function showNewGreeting(){
+      try {
+        if (localStorage.getItem('rr-seen-greeting')) return;
+        var overlay = document.getElementById('greeting-overlay');
+        if (!overlay) return;
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden','false');
+        // pause heavy loops while visible
+        if (window.particleControl) window.particleControl.pause();
+        if (window.rrControl) window.rrControl.pause();
+
+        var btn = document.getElementById('btn-visit');
+        if (btn) btn.focus();
+
+        function hide() {
+          overlay.classList.remove('show');
+          overlay.setAttribute('aria-hidden','true');
+          localStorage.setItem('rr-seen-greeting','1');
+          if (window.particleControl) window.particleControl.resume();
+          if (window.rrControl) window.rrControl.resume();
+        }
+
+        btn && btn.addEventListener('click', function(e){ e.preventDefault(); hide(); // navigate after a short delay to allow hide animation
+          setTimeout(function(){ window.location.hash = '#projects'; }, 140);
+        });
+
+        document.addEventListener('keydown', function onKey(e){ if (e.key === 'Escape') { hide(); document.removeEventListener('keydown', onKey); } });
+      } catch (err) { /* swallow */ }
+    }
+
+    // expose to be callable elsewhere
+    window.showNewGreeting = showNewGreeting;
   })();
   </script>
 </body>
